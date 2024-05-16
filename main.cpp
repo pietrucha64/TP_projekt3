@@ -120,8 +120,8 @@ int Wizualizacja()
     return 0;
 }
 //Progowanie sygnalu audio
-int progowanie(double prog){
-
+int progowanie(double prog)
+{
     using namespace matplot;
     std::vector<double> x;
     std::vector<double> y;
@@ -271,7 +271,8 @@ int DFT_audio()
     return 0;
 }
 
-int IDFT_audio(){
+int IDFT_audio()
+{
     using namespace matplot;
     std::vector<double> x;
     std::vector<double> a;
@@ -340,8 +341,6 @@ PYBIND11_MODULE(TP_projekt3, m) {
     m.def("IDFT",&IDFT);
     m.def("DFT_audio",&DFT_audio);
     m.def("IDFT_audio",&IDFT_audio);
-
-
 
 #ifdef VERSION_INFO
     m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
