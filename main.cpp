@@ -225,6 +225,109 @@ int IDFT(double frequency)
     return 0;
 }
 
+int DFT_audio()
+{
+    using namespace matplot;
+    std::vector<double> x;
+    std::vector<double> a;
+    std::vector<double> REX;
+    std::vector<double> IMX;
+
+    const std::string inputFilePath = std::string (PROJECT_BINARY_DIR) + "/test-audio.wav";
+    AudioFile<double> audioFile;
+    audioFile.load (inputFilePath);
+    int channel = 0;
+    int numSamples = audioFile.getNumSamplesPerChannel();
+    if(numSamples>400)
+    {
+        numSamples = 400;
+    }
+
+    for (int i = 0; i < numSamples; i++)
+    {
+        double currentSample = audioFile.samples[channel][i];
+        x.push_back(i);
+        a.push_back(currentSample);
+    }
+
+    for (int k = 0; k < a.size(); k++)
+    {
+        double A = 0;
+        double B = 0;
+        for(int n = 0; n < a.size(); n++)
+        {
+            A+= cos((2 * M_PI * k * n) / a.size()) * a[n];
+            B+= -sin((2 * M_PI * k * n) / a.size()) * a[n];
+        }
+        REX.push_back(A);
+        IMX.push_back(B);
+    }
+    plot(x,IMX);
+    title("DFT(audio)");
+    xlabel("X");
+    ylabel("IMX");
+
+
+    return 0;
+}
+
+int IDFT_audio(){
+    using namespace matplot;
+    std::vector<double> x;
+    std::vector<double> a;
+    std::vector<double> REX;
+    std::vector<double> IMX;
+
+    const std::string inputFilePath = std::string (PROJECT_BINARY_DIR) + "/test-audio.wav";
+    AudioFile<double> audioFile;
+    audioFile.load (inputFilePath);
+    int channel = 0;
+    int numSamples = audioFile.getNumSamplesPerChannel();
+    if(numSamples>400)
+    {
+        numSamples = 400;
+    }
+
+    for (int i = 0; i < numSamples; i++)
+    {
+        double currentSample = audioFile.samples[channel][i];
+        x.push_back(i);
+        a.push_back(currentSample);
+    }
+
+    for (int k = 0; k < a.size(); k++)
+    {
+        double A = 0;
+        double B = 0;
+        for(int n = 0; n < a.size(); n++)
+        {
+            A+= cos((2 * M_PI * k * n) / a.size()) * a[n];
+            B+= -sin((2 * M_PI * k * n) / a.size()) * a[n];
+        }
+        REX.push_back(A);
+        IMX.push_back(B);
+    }
+
+    std::vector<double> Y;
+    for (int i = 0; i < a.size(); i++)
+    {
+        double c = 0;
+        for (int k = 0; k < a.size(); k++)
+        {
+            c += REX[k] * cos(2*M_PI*k*i/a.size());
+            c += -IMX[k] * sin(2*M_PI*k*i/a.size());
+        }
+        Y.push_back(c);
+    }
+
+    plot(x,Y);
+    title("IDFT");
+    xlabel("X");
+    ylabel("Y");
+
+    return 0;
+}
+
 PYBIND11_MODULE(TP_projekt3, m) {
 
     m.def("sinus",&sinus);
@@ -235,6 +338,10 @@ PYBIND11_MODULE(TP_projekt3, m) {
     m.def("progowanie",&progowanie);
     m.def("DFT",&DFT);
     m.def("IDFT",&IDFT);
+    m.def("DFT_audio",&DFT_audio);
+    m.def("IDFT_audio",&IDFT_audio);
+
+
 
 #ifdef VERSION_INFO
     m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
